@@ -1,27 +1,52 @@
 # SPI_Singleton
 Реализация Singleton Logger для интернет-магазина
 
-## Ссылка на ТЗ
-[Техническое задание](ЗаданиеС.docx)
+## Структура
 
-## Скриншот вывода консоли
-![Вывод программы](ShopMonitoring/Console.png)
+<pre>
+SPI_Singleton/
+├── ShopMonitoring/
+│   ├── Logger.cs
+│   ├── InventoryManager.cs
+│   ├── OrderProcessor.cs
+│   ├── PaymentGateway.cs
+│   ├── Program.cs
+│   ├── ShopMonitoring.csproj
+│   └── TestsPlan.md
+├── Console.png
+├── ShopMonitoring.sln
+├── ЗаданиеС.docx
+└── README.md
+</pre>
 
-## Описание реализации Singleton
+## Запуск программы
+Через Bash
+1. Клонирование
+```shell
+git clone https://github.com/ваш-логин/SPI_Singleton.git
+```
+2. Переход в папку проекта
+```shell
+cd SPI_Singleton/ShopMonitoring
+```
+3. Запуск
+```shell
+dotnet run
+```
 
-### Ключевые элементы реализации:
-1. **Приватный конструктор** - предотвращает создание экземпляров извне класса
-2. **Статическое поле `instance`** - хранит ссылку на единственный экземпляр
-3. **Публичный статический метод `GetInstance()`** - контролирует создание и доступ к экземпляру
-4. **Ленивая инициализация** - экземпляр создаётся только при первом обращении
+## Ожидаемый вывод программы
+<pre>
+Logger instance created
+=== Обработка заказа #123 ===
+[INFO] Inventory: checking stock for laptop
+[WARN] Inventory: low stock for laptop (3 left)
+[INFO] Inventory: reserved 1 of laptop
+[INFO] Inventory: checking stock for laptop
+[WARN] Inventory: low stock for laptop (3 left)
+[INFO] OrderProcessor: processing order 123
+[INFO] PaymentGateway: processing payment for order 123, amount=999,99
 
-### Особенности реализации:
-- Простая реализация без многопоточности
-- Централизованное управление уровнем логирования через `SetLogLevel()`
-- Все модули используют один экземпляр логгера (проверяется через `ReferenceEquals`)
-- Фильтрация сообщений по уровням (INFO < WARN < ERROR)
-
-### Использование в классах:
-- `InventoryManager`, `OrderProcessor`, `PaymentGateway` получают логгер через `Logger.GetInstance()`
-- Изменение уровня логирования влияет на все модули одновременно
-- Формат вывода: `[LEVEL] message`
+=== После SetLogLevel('WARN') ===
+[WARN] Inventory: low stock for mouse (2 left)
+Все логгеры одинаковые: True True
+</pre>
