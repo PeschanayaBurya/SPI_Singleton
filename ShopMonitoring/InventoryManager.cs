@@ -53,7 +53,7 @@ namespace ShopMonitoring
             {
                 Logger.Log($"Inventory: {productId} is out of stock", "ERROR");
             }
-            else if (currentStock < 5)
+            if (currentStock < 5)
             {
                 Logger.Log($"Inventory: low stock for {productId} ({currentStock} left)", "WARN");
             }
@@ -84,7 +84,7 @@ namespace ShopMonitoring
         // Резервирование указанного количества товара на складе
         public bool ReserveStock(string productId, int quantity)
         {
-            Logger.Log($"Inventory: attempting to reserve {quantity} of {productId}", "INFO");
+            Logger.Log($"Inventory: reserve {quantity} of {productId}", "INFO");
 
             // Сначала проверяем наличие через HasStock
             if (!HasStock(productId))
