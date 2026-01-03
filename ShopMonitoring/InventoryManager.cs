@@ -26,15 +26,25 @@ namespace ShopMonitoring
             logger = Logger.GetInstance();
         }
 
-        // Проверка наличия товара на складе
-        public bool CheckStock(string productId)
+        // 1. Только проверка наличия
+        public bool HasStock(string productId)
+        {
+            if (!stock.ContainsKey(productId))
+            {
+                return false;
+            }
+            return stock[productId] > 0;
+        }
+
+        // Только логирование статуса
+        public void LogStockStatus(string productId)
         {
             Logger.Log($"Inventory: checking stock for {productId}", "INFO");
 
             if (!stock.ContainsKey(productId))
             {
                 Logger.Log($"Inventory: product {productId} not found in system", "ERROR");
-                return false;
+                return;
             }
 
             int currentStock = stock[productId];
@@ -42,10 +52,8 @@ namespace ShopMonitoring
             if (currentStock <= 0)
             {
                 Logger.Log($"Inventory: {productId} is out of stock", "ERROR");
-                return false;
             }
-
-            if (currentStock < 5)
+            else if (currentStock < 5)
             {
                 Logger.Log($"Inventory: low stock for {productId} ({currentStock} left)", "WARN");
             }
@@ -53,19 +61,35 @@ namespace ShopMonitoring
             {
                 Logger.Log($"Inventory: sufficient stock for {productId} ({currentStock} left)", "INFO");
             }
+        }
 
-            return true;
+        // Проверка наличия товара на складе
+        public bool CheckStock(string productId)
+        {
+            bool hasStock = HasStock(productId);
+            LogStockStatus(productId);
+            return hasStock;
+        }
+
+        // Получения количества товара
+        public int GetStockQuantity(string productId)
+        {
+            if (stock.ContainsKey(productId))
+            {
+                return stock[productId];
+            }
+            return -1; // выбросить исключение
         }
 
         // Резервирование указанного количества товара на складе
         public bool ReserveStock(string productId, int quantity)
         {
-            Logger.Log($"Inventory: reserved {quantity} of {productId}", "INFO");
+            Logger.Log($"Inventory: attempting to reserve {quantity} of {productId}", "INFO");
 
-            // Сначала проверяем наличие через CheckStock
-            if (!CheckStock(productId))
+            // Сначала проверяем наличие через HasStock
+            if (!HasStock(productId))
             {
-                // CheckStock уже залогировал ошибку
+                LogStockStatus(productId); // логируем
                 return false;
             }
 
@@ -73,7 +97,8 @@ namespace ShopMonitoring
 
             if (currentStock < quantity) // Проверка на возможность резервирования
             {
-                Logger.Log($"no {productId} in stock in the amount of {Math.Abs(currentStock - quantity)} pieces", "ERROR");
+                Logger.Log($"Inventory: cannot reserve (no {productId} in stock in the amount of {Math.Abs(currentStock - quantity)} pieces)", "ERROR");
+                return false;
             }
             else // Резервирование
             {

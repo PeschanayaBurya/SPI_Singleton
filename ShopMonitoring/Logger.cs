@@ -26,10 +26,15 @@ namespace ShopMonitoring
             return instance;
         }
 
+        private bool IsValidLevel(string level)
+        {
+            return Array.IndexOf(validLevels, level) != -1;
+        }
+
         // Запись сообщения в лог, если его уровень соответствует текущему уровню логирования
         public void Log(string message, string level)
         {
-            if (Array.IndexOf(validLevels, level) == -1) return;
+            if (!IsValidLevel(level)) return;
 
             int currentLevelIndex = Array.IndexOf(validLevels, logLevel);
             int messageLevelIndex = Array.IndexOf(validLevels, level);

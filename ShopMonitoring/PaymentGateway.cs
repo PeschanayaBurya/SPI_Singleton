@@ -22,6 +22,7 @@ namespace ShopMonitoring
             if (amount < 0)
             {
                 Logger.Log($"PaymentGateway: invalid amount", "ERROR");
+                return false;
             }
             else
             {
