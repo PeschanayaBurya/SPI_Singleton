@@ -103,6 +103,7 @@ namespace ShopMonitoring
             else // Резервирование
             {
                 stock[productId] = currentStock - quantity;
+                LogStockStatus(productId);
             }
 
             return true;
